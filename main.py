@@ -24,7 +24,7 @@ def load_CNN_model(args, device):
         batch_size=args.batch_size,
         max_epochs=args.epochs,
         criterion=nn.CrossEntropyLoss,
-        optimizer=torch.optim.Adam,
+        optimizer=torch.optim.AdamW,
         train_split=None,
         verbose=0,
         device=device,

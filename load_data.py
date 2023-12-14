@@ -10,7 +10,7 @@ class LoadData:
     """Download, split and shuffle dataset into train, validate, test and pool"""
 
     def __init__(self, val_size: int = 100):
-        self.train_size = 4000
+        self.train_size = 1000
         self.val_size = val_size
         self.pool_size = 5712 - self.train_size - self.val_size
         self.cancer_train, self.cancer_test = self.download_dataset()
@@ -39,7 +39,7 @@ class LoadData:
     def download_dataset(self):
         """Load Cancer dataset for training and test set."""
         transform = transforms.Compose(
-            [transforms.Resize((128, 128)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            [transforms.Resize((64, 64)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
         cancer_train = ImageFolder("dataset/Training", transform=transform)
         cancer_test = ImageFolder("dataset/Testing", transform=transform)
