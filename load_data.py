@@ -9,10 +9,10 @@ from torch.utils.data import DataLoader, random_split
 class LoadData:
     """Download, split and shuffle dataset into train, validate, test and pool"""
 
-    def __init__(self, val_size: int = 50):
-        self.train_size = 450
+    def __init__(self, val_size: int = 100):
+        self.train_size = 4000
         self.val_size = val_size
-        self.pool_size = 613 - self.train_size - self.val_size
+        self.pool_size = 5712 - self.train_size - self.val_size
         self.cancer_train, self.cancer_test = self.download_dataset()
         (
             self.X_train_All,
@@ -39,10 +39,10 @@ class LoadData:
     def download_dataset(self):
         """Load Cancer dataset for training and test set."""
         transform = transforms.Compose(
-            [transforms.Resize(128), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+            [transforms.Resize((128, 128)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
-        cancer_train = ImageFolder("Data/train", transform=transform)
-        cancer_test = ImageFolder("Data/valid", transform=transform)
+        cancer_train = ImageFolder("dataset/Training", transform=transform)
+        cancer_test = ImageFolder("dataset/Testing", transform=transform)
         return cancer_train, cancer_test
 
     def split_and_load_dataset(self):
@@ -58,7 +58,7 @@ class LoadData:
             dataset=pool_set, batch_size=self.pool_size, shuffle=True
         )
         test_loader = DataLoader(
-            dataset=self.cancer_test, batch_size=72, shuffle=True
+            dataset=self.cancer_test, batch_size=1311, shuffle=True
         )
         X_train_All, y_train_All = next(iter(train_loader))
         X_val, y_val = next(iter(val_loader))
