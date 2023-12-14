@@ -1,8 +1,8 @@
-import torch
 import numpy as np
-from modAL.models import ActiveLearner
+import torch
 
-from acquisition_functions import uniform, max_entropy, bald, var_ratios, mean_std
+from acquisition_functions import bald, max_entropy, mean_std, uniform, var_ratios
+from modAL.models import ActiveLearner
 
 
 def active_learning_procedure(
