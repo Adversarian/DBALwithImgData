@@ -2,18 +2,18 @@ import os
 import numpy as np
 import torch
 import torchvision.transforms as transforms
-from torchvision.datasets import MNIST
+from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader, random_split
 
 
 class LoadData:
     """Download, split and shuffle dataset into train, validate, test and pool"""
 
-    def __init__(self, val_size: int = 100):
-        self.train_size = 10000
+    def __init__(self, val_size: int = 50):
+        self.train_size = 450
         self.val_size = val_size
-        self.pool_size = 60000 - self.train_size - self.val_size
-        self.mnist_train, self.mnist_test = self.download_dataset()
+        self.pool_size = 613 - self.train_size - self.val_size
+        self.cancer_train, self.cancer_test = self.download_dataset()
         (
             self.X_train_All,
             self.y_train_All,
@@ -36,26 +36,19 @@ class LoadData:
         np_data = tensor_data.detach().numpy()
         return np_data
 
-    def check_MNIST_folder(self) -> bool:
-        """Check whether MNIST folder exists, skip download if existed"""
-        if os.path.exists("MNIST/"):
-            return False
-        return True
-
     def download_dataset(self):
-        """Load MNIST dataset for training and test set."""
+        """Load Cancer dataset for training and test set."""
         transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+            [transforms.Resize(128), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
-        download = self.check_MNIST_folder()
-        mnist_train = MNIST(".", train=True, download=download, transform=transform)
-        mnist_test = MNIST(".", train=False, download=download, transform=transform)
-        return mnist_train, mnist_test
+        cancer_train = ImageFolder("Data/train", transform=transform)
+        cancer_test = ImageFolder("Data/valid", transform=transform)
+        return cancer_train, cancer_test
 
     def split_and_load_dataset(self):
         """Split all training datatset into train, validate, pool sets and load them accordingly."""
         train_set, val_set, pool_set = random_split(
-            self.mnist_train, [self.train_size, self.val_size, self.pool_size]
+            self.cancer_train, [self.train_size, self.val_size, self.pool_size]
         )
         train_loader = DataLoader(
             dataset=train_set, batch_size=self.train_size, shuffle=True
@@ -65,7 +58,7 @@ class LoadData:
             dataset=pool_set, batch_size=self.pool_size, shuffle=True
         )
         test_loader = DataLoader(
-            dataset=self.mnist_test, batch_size=10000, shuffle=True
+            dataset=self.cancer_test, batch_size=72, shuffle=True
         )
         X_train_All, y_train_All = next(iter(train_loader))
         X_val, y_val = next(iter(val_loader))
@@ -81,7 +74,7 @@ class LoadData:
             y_train_All: y input of training set
         """
         initial_idx = np.array([], dtype=np.int)
-        for i in range(10):
+        for i in range(4):
             idx = np.random.choice(
                 np.where(self.y_train_All == i)[0], size=2, replace=False
             )
